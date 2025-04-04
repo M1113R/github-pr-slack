@@ -33,7 +33,7 @@ app.post("/github-webhook", async (req, res) => {
       res.sendStatus(200);
     } catch (err) {
       console.error(
-        "❌ Erro ao enviar para o Slack:",
+        "Erro ao enviar para o Slack:",
         err.response?.data || err.message
       );
       res.sendStatus(500);
