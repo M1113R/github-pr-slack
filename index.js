@@ -29,7 +29,7 @@ app.post("/github-webhook", async (req, res) => {
 
     try {
       await axios.post(SLACK_WEBHOOK_URL, message);
-      console.log(`✅ Mensagem enviada: ${message.text}`);
+      console.log(`Mensagem enviada: ${message.text}`);
       res.sendStatus(200);
     } catch (err) {
       console.error(
