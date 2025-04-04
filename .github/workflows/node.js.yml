@@ -1,9 +1,7 @@
-name: Node.js CI
+name: Node.js CI with Public URL
 
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
 
 jobs:
@@ -19,12 +17,24 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Criar .env com secrets
-        run: |
-          echo "SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}" >> .env
+      - name: Criar .env
+        run: echo "SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}" >> .env
 
       - name: Instalar dependências
         run: npm install
 
-      - name: Rodar API (opcional)
-        run: npm start
+      - name: Instalar ngrok
+        run: npm install -g ngrok
+
+      - name: Iniciar API e gerar link público
+        run: |
+          npm start &                     # roda seu servidor em background
+          sleep 5                         # espera subir
+          ngrok http 3000 > ngrok.log &  # inicia ngrok
+          sleep 5
+          curl http://localhost:4040/api/tunnels > tunnels.json
+          echo "🔗 URL pública:"
+          cat tunnels.json | jq -r '.tunnels[0].public_url'
+
+      - name: Rodar testes (se quiser testar o link público)
+        run: echo "Pode colocar testes com curl aqui"
